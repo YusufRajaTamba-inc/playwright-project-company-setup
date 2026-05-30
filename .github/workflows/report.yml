@@ -1,0 +1,37 @@
+name: Report Reusable
+
+on:
+  workflow_call:
+    inputs:
+      workspace_type:
+        description: "Target workspace: api or web"
+        required: true
+        type: string
+      test_environment:
+        description: "Logical test environment, example SIT/UAT"
+        required: true
+        type: string
+      keyword:
+        description: "Test tag/keyword used for run"
+        required: false
+        type: string
+        default: ""
+      scheduler:
+        description: "Whether this run is triggered by scheduler"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  report:
+    name: Report ${{ inputs.workspace_type }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish summary
+        run: |
+          echo "## Automation Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Workspace: ${{ inputs.workspace_type }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Environment: ${{ inputs.test_environment }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Keyword: ${{ inputs.keyword != '' && inputs.keyword || 'N/A' }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Scheduler run: ${{ inputs.scheduler }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Artifact name: ${{ inputs.workspace_type }}-playwright-report" >> "$GITHUB_STEP_SUMMARY"
