@@ -1,0 +1,9 @@
+{
+  "name": "@automation/common-module",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint \"**/*.js\" --fix --no-error-on-unmatched-pattern"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@automation/api",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint \"**/*.js\" --fix --no-error-on-unmatched-pattern",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1"
+  }
+}
