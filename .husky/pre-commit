@@ -1,0 +1,1 @@
+npm run lint:web && npm run lint:api && npm run lint:common-module && npm run lint:mobile

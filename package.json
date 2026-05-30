@@ -1,16 +1,33 @@
 {
   "name": "projectalpha",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint:common-module": "npm run lint --workspace=packages/common-module",
+    "lint:api": "npm run lint --workspace=packages/api-automation",
+    "lint:web": "npm run lint --workspace=packages/web-automation",
+    "lint:mobile": "npm run lint --workspace=packages/mobile-automation",
+    "test:api": "npm run test --workspace=packages/api-automation",
+    "test:web": "npm run test --workspace=packages/web-automation",
+    "test:mobile": "npm run test --workspace=packages/mobile-automation",
+    "test:web:ui": "npm run test:ui --workspace=packages/web-automation",
+    "test:web:headed": "npm run test:headed --workspace=packages/web-automation",
+    "report:web": "npm run report --workspace=packages/web-automation",
+    "prepare": "husky"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
-    "@types/node": "^25.9.1"
-    
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.23.0",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0"
   }
 }
