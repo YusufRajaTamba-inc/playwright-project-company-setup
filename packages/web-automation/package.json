@@ -6,9 +6,13 @@
   "scripts": {
     "lint": "eslint \"**/*.js\" --fix --no-error-on-unmatched-pattern",
     "test": "playwright test",
+    "test:orangehrm-login": "playwright test tests/orangehrm-login.spec.js --project=chromium",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "report": "playwright show-report"
+  },
+  "dependencies": {
+    "@automation/common-module": "1.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
