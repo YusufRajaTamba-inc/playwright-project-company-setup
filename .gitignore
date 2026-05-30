@@ -23,5 +23,9 @@ packages/common-module/config/env.uat.json
 packages/common-module/config/db.sit.json
 packages/common-module/config/db.uat.json
 
+# Local GitHub bulk import files
+.secrets.*.env
+.vars.*.env
+
 # macOS
 .DS_Store
