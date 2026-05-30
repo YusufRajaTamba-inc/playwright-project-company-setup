@@ -2,6 +2,8 @@
   "name": "@automation/common-module",
   "version": "1.0.0",
   "type": "module",
+  "main": "index.js",
+  "exports": "./index.js",
   "private": true,
   "scripts": {
     "lint": "eslint \"**/*.js\" --fix --no-error-on-unmatched-pattern"

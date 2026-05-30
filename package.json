@@ -14,6 +14,7 @@
     "test:api": "npm run test --workspace=packages/api-automation",
     "test:web": "npm run test --workspace=packages/web-automation",
     "test:mobile": "npm run test --workspace=packages/mobile-automation",
+    "test:web:orangehrm-login": "npm run test:orangehrm-login --workspace=packages/web-automation",
     "test:web:ui": "npm run test:ui --workspace=packages/web-automation",
     "test:web:headed": "npm run test:headed --workspace=packages/web-automation",
     "report:web": "npm run report --workspace=packages/web-automation",
