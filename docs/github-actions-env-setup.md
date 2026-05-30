@@ -1,6 +1,6 @@
 # GitHub Actions Env Setup with TEST_CONFIG_JSON
 
-Dokumen ini menjelaskan setup environment GitHub Actions dengan pola single secret `TEST_CONFIG_JSON`.
+Dokumen ini menjelaskan setup environment GitHub Actions dengan pola single secret TEST_CONFIG_JSON.
 
 Tujuan pola ini:
 
@@ -10,7 +10,7 @@ Tujuan pola ini:
 
 ## Prasyarat
 
-1. Sudah login `gh` CLI ke akun yang punya akses repo.
+1. Sudah login gh CLI ke akun yang punya akses repo.
 2. Jalankan command dari root repository.
 
 Cek cepat:
@@ -46,14 +46,14 @@ Verifikasi:
 gh api repos/YusufRajaTamba-inc/playwright-project/environments -q '.environments[].name'
 ```
 
-Harus ada `SIT` dan `UAT`.
+Harus ada SIT dan UAT.
 
 ## 3) Set single secret TEST_CONFIG_JSON
 
 Sumber file config lokal:
 
-- `packages/common-module/config/env.sit.json`
-- `packages/common-module/config/env.uat.json`
+- packages/common-module/config/env.sit.json
+- packages/common-module/config/env.uat.json
 
 ### SIT
 
@@ -74,9 +74,7 @@ gh secret list --env SIT
 gh secret list --env UAT
 ```
 
-Di masing-masing environment harus ada:
-
-- `TEST_CONFIG_JSON`
+Di masing-masing environment harus ada TEST_CONFIG_JSON.
 
 ## 4) Set variable ENV per environment
 
@@ -93,16 +91,16 @@ gh variable list --env UAT
 
 Harus muncul:
 
-- SIT: `ENV=SIT`
-- UAT: `ENV=UAT`
+- SIT: ENV=SIT
+- UAT: ENV=UAT
 
 ## 5) Jalankan workflow manual
 
 1. Buka tab Actions di GitHub repo.
-2. Pilih workflow **Playwright Tests**.
-3. Klik **Run workflow**.
+2. Pilih workflow Playwright Tests.
+3. Klik Run workflow.
 4. Pilih branch yang dipakai.
-5. Pilih `target_env` (`SIT` atau `UAT`).
+5. Pilih target_env (SIT atau UAT).
 6. Jalankan workflow.
 
 Checklist hasil:
@@ -113,7 +111,7 @@ Checklist hasil:
 
 ## 6) Format JSON yang direkomendasikan
 
-Contoh isi `TEST_CONFIG_JSON`:
+Contoh isi TEST_CONFIG_JSON:
 
 ```json
 {
@@ -125,7 +123,7 @@ Contoh isi `TEST_CONFIG_JSON`:
 }
 ```
 
-Kalau nanti butuh key baru, cukup tambahkan di JSON secret dan akses di JavaScript melalui `getEnvConfig()`.
+Kalau nanti butuh key baru, cukup tambahkan di JSON secret dan akses di JavaScript melalui getEnvConfig().
 
 ## 7) Migrasi dari setup lama (BASE_URL/USERNAME/PASSWORD terpisah)
 
@@ -147,7 +145,7 @@ gh secret delete PASSWORD --env UAT
 
 Penyebab umum:
 
-1. Akun aktif `gh` tidak punya akses repo.
+1. Akun aktif gh tidak punya akses repo.
 2. Host/auth account tidak sesuai.
 
 Perbaikan:
@@ -161,4 +159,4 @@ gh api repos/YusufRajaTamba-inc/playwright-project -q .full_name
 
 ### Workflow gagal karena TEST_CONFIG_JSON tidak ada
 
-Pastikan secret `TEST_CONFIG_JSON` sudah di-set di GitHub Environment yang dijalankan (`SIT` atau `UAT`).
+Pastikan secret TEST_CONFIG_JSON sudah di-set di GitHub Environment yang dijalankan (SIT atau UAT).
