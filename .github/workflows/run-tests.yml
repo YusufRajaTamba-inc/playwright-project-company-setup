@@ -1,0 +1,100 @@
+name: Run Tests Reusable
+
+on:
+  workflow_call:
+    inputs:
+      workspace_type:
+        description: "Target workspace: api or web"
+        required: true
+        type: string
+      test_environment:
+        description: "Logical test environment, example SIT/UAT"
+        required: true
+        type: string
+      githost_environment:
+        description: "GitHub Environment name for secrets/vars"
+        required: false
+        type: string
+        default: ""
+      keyword:
+        description: "Optional Playwright grep keyword"
+        required: false
+        type: string
+        default: ""
+      workers:
+        description: "Optional Playwright workers count"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  tests:
+    name: Run ${{ inputs.workspace_type }} tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment:
+      name: ${{ inputs.githost_environment != '' && inputs.githost_environment || inputs.test_environment }}
+    env:
+      ENV: ${{ inputs.test_environment }}
+      TEST_CONFIG_JSON: ${{ secrets.TEST_CONFIG_JSON }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Materialize environment config
+        run: |
+          if [[ -z "$TEST_CONFIG_JSON" ]]; then
+            echo "Missing TEST_CONFIG_JSON secret in GitHub Environment: $ENV"
+            exit 1
+          fi
+
+          ENV_LOWER=$(echo "$ENV" | tr '[:upper:]' '[:lower:]')
+          CONFIG_PATH="packages/common-module/config/env.${ENV_LOWER}.json"
+          printf '%s' "$TEST_CONFIG_JSON" > "$CONFIG_PATH"
+
+          echo "Wrote config file for $ENV to $CONFIG_PATH"
+
+      - name: Install Playwright browsers
+        run: |
+          if [[ "${{ inputs.workspace_type }}" == "web" ]]; then
+            cd packages/web-automation
+            npx playwright install --with-deps chromium firefox webkit
+          else
+            cd packages/api-automation
+            npx playwright install --with-deps chromium
+          fi
+
+      - name: Run tests
+        run: |
+          WORKSPACE_TYPE='${{ inputs.workspace_type }}'
+          KEYWORD='${{ inputs.keyword }}'
+          WORKERS='${{ inputs.workers }}'
+
+          EXTRA_ARGS=""
+          if [[ -n "$KEYWORD" ]]; then
+            EXTRA_ARGS="$EXTRA_ARGS --grep $KEYWORD"
+          fi
+          if [[ -n "$WORKERS" ]]; then
+            EXTRA_ARGS="$EXTRA_ARGS --workers=$WORKERS"
+          fi
+
+          if [[ "$WORKSPACE_TYPE" == "web" ]]; then
+            npm run test --workspace=packages/web-automation -- $EXTRA_ARGS
+          else
+            npm run test --workspace=packages/api-automation -- $EXTRA_ARGS
+          fi
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: ${{ inputs.workspace_type }}-playwright-report
+          path: ${{ inputs.workspace_type == 'web' && 'packages/web-automation/playwright-report/' || 'packages/api-automation/playwright-report/' }}
+          retention-days: 14

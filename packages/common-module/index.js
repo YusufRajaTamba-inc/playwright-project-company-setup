@@ -15,18 +15,33 @@ export const getEnvConfig = () => {
 	const activeEnv = getActiveEnv();
 	const fileName = `env.${activeEnv.toLowerCase()}.json`;
 	const filePath = path.join(__dirname, 'config', fileName);
+	let parsed = {};
 
-	if (!fs.existsSync(filePath)) {
-		throw new Error(`Missing environment config file: ${filePath}`);
+	if (fs.existsSync(filePath)) {
+		const raw = fs.readFileSync(filePath, 'utf-8');
+		parsed = JSON.parse(raw);
 	}
 
-	const raw = fs.readFileSync(filePath, 'utf-8');
-	const parsed = JSON.parse(raw);
+	let jsonFromSecret = {};
+	if (process.env.TEST_CONFIG_JSON) {
+		jsonFromSecret = JSON.parse(process.env.TEST_CONFIG_JSON);
+	}
 
-	return {
+	const config = {
+		...parsed,
+		...jsonFromSecret,
 		ENV: activeEnv,
-		BASE_URL: process.env.BASE_URL || parsed.BASE_URL,
-		USERNAME: process.env.USERNAME || parsed.USERNAME,
-		PASSWORD: process.env.PASSWORD || parsed.PASSWORD,
 	};
+
+	if (process.env.BASE_URL) config.BASE_URL = process.env.BASE_URL;
+	if (process.env.USERNAME) config.USERNAME = process.env.USERNAME;
+	if (process.env.PASSWORD) config.PASSWORD = process.env.PASSWORD;
+
+	if (!config.BASE_URL || !config.USERNAME || !config.PASSWORD) {
+		throw new Error(
+			`Incomplete environment config for ${activeEnv}. Provide BASE_URL/USERNAME/PASSWORD via GitHub Environment secrets or local ${fileName}.`
+		);
+	}
+
+	return config;
 };
